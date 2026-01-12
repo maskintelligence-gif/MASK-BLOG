@@ -29,6 +29,9 @@ const contentInput = document.getElementById("content");
 const publishedInput = document.getElementById("published");
 const pageTitle = document.getElementById("page-title");
 
+const categoriesList = document.getElementById("categories-list");
+const tagsList = document.getElementById("tags-list");
+
 /* =========================================================
    SLUG AUTO-GENERATION
 ========================================================= */
@@ -44,19 +47,71 @@ function generateSlug(text) {
     .replace(/-+/g, "-");
 }
 
-// Auto-generate slug from title (only if user hasn't edited slug)
 titleInput.addEventListener("input", () => {
   if (slugTouchedManually) return;
   slugInput.value = generateSlug(titleInput.value);
 });
 
-// Detect manual slug edits
 slugInput.addEventListener("input", () => {
   slugTouchedManually = true;
 });
 
 /* =========================================================
-   EDIT MODE — LOAD POST
+   LOAD CATEGORIES & TAGS
+========================================================= */
+
+async function loadCategories(selected = []) {
+  const { data, error } = await supabase
+    .from("categories")
+    .select("id, name")
+    .order("name");
+
+  if (error) return;
+
+  categoriesList.innerHTML = "";
+
+  data.forEach(cat => {
+    const label = document.createElement("label");
+    label.className = "checkbox";
+
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.value = cat.id;
+    input.checked = selected.includes(cat.id);
+
+    label.appendChild(input);
+    label.append(` ${cat.name}`);
+    categoriesList.appendChild(label);
+  });
+}
+
+async function loadTags(selected = []) {
+  const { data, error } = await supabase
+    .from("tags")
+    .select("id, name")
+    .order("name");
+
+  if (error) return;
+
+  tagsList.innerHTML = "";
+
+  data.forEach(tag => {
+    const label = document.createElement("label");
+    label.className = "checkbox";
+
+    const input = document.createElement("input");
+    input.type = "checkbox";
+    input.value = tag.id;
+    input.checked = selected.includes(tag.id);
+
+    label.appendChild(input);
+    label.append(` ${tag.name}`);
+    tagsList.appendChild(label);
+  });
+}
+
+/* =========================================================
+   EDIT MODE — LOAD POST + RELATIONS
 ========================================================= */
 
 if (postId) {
@@ -78,9 +133,25 @@ if (postId) {
   contentInput.value = post.content;
   publishedInput.checked = post.published;
 
-  // IMPORTANT:
-  // If editing an existing post, we assume slug is intentional
   slugTouchedManually = true;
+
+  const { data: catLinks } = await supabase
+    .from("blog_post_categories")
+    .select("category_id")
+    .eq("post_id", postId);
+
+  const { data: tagLinks } = await supabase
+    .from("blog_post_tags")
+    .select("tag_id")
+    .eq("post_id", postId);
+
+  await loadCategories(catLinks?.map(c => c.category_id));
+  await loadTags(tagLinks?.map(t => t.tag_id));
+
+} else {
+  // New post — load empty lists
+  await loadCategories();
+  await loadTags();
 }
 
 /* =========================================================
@@ -98,33 +169,82 @@ form.addEventListener("submit", async (e) => {
     published: publishedInput.checked
   };
 
-  // Handle published_at correctly
-  if (payload.published) {
-    payload.published_at = new Date().toISOString();
-  } else {
-    payload.published_at = null;
-  }
+  payload.published_at = payload.published
+    ? new Date().toISOString()
+    : null;
 
-  let result;
+  let savedPostId = postId;
 
   if (postId) {
-    // UPDATE
-    result = await supabase
+    const { error } = await supabase
       .from("blog_posts")
       .update(payload)
       .eq("id", postId);
+
+    if (error) {
+      errorEl.textContent = error.message;
+      return;
+    }
+
   } else {
-    // CREATE
     payload.author_id = session.user.id;
 
-    result = await supabase
+    const { data, error } = await supabase
       .from("blog_posts")
-      .insert(payload);
+      .insert(payload)
+      .select()
+      .single();
+
+    if (error) {
+      errorEl.textContent = error.message;
+      return;
+    }
+
+    savedPostId = data.id;
   }
 
-  if (result.error) {
-    errorEl.textContent = result.error.message;
-    return;
+  /* ===============================
+     SAVE CATEGORIES
+  ================================ */
+
+  const selectedCategories = Array.from(
+    categoriesList.querySelectorAll("input:checked")
+  ).map(i => ({
+    post_id: savedPostId,
+    category_id: i.value
+  }));
+
+  await supabase
+    .from("blog_post_categories")
+    .delete()
+    .eq("post_id", savedPostId);
+
+  if (selectedCategories.length) {
+    await supabase
+      .from("blog_post_categories")
+      .insert(selectedCategories);
+  }
+
+  /* ===============================
+     SAVE TAGS
+  ================================ */
+
+  const selectedTags = Array.from(
+    tagsList.querySelectorAll("input:checked")
+  ).map(i => ({
+    post_id: savedPostId,
+    tag_id: i.value
+  }));
+
+  await supabase
+    .from("blog_post_tags")
+    .delete()
+    .eq("post_id", savedPostId);
+
+  if (selectedTags.length) {
+    await supabase
+      .from("blog_post_tags")
+      .insert(selectedTags);
   }
 
   window.location.href = "/admin/posts.html";
