@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Post Preview</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="stylesheet" href="/admin/css/admin.css" />
+</head>
+<body>
+
+  <main class="admin-container">
+    <h1 id="preview-title"></h1>
+    <p><em id="preview-slug"></em></p>
+    <hr />
+    <div id="preview-content"></div>
+  </main>
+
+  <script type="module">
+    import { renderMarkdown } from "/admin/js/markdown.js";
+
+    const data = JSON.parse(sessionStorage.getItem("postPreview"));
+
+    if (!data) {
+      document.body.textContent = "No preview data.";
+      throw new Error("No preview data");
+    }
+
+    document.getElementById("preview-title").textContent = data.title;
+    document.getElementById("preview-slug").textContent = `/${data.slug}`;
+    document.getElementById("preview-content").innerHTML =
+      renderMarkdown(data.content);
+  </script>
+</body>
+</html>
