@@ -2,33 +2,70 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Edit Post</title>
+  <title>Post Editor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <link rel="stylesheet" href="/admin/css/admin.css" />
 </head>
 <body>
 
-  <h1 id="page-title">New Post</h1>
+  <main class="admin-container">
 
-  <nav>
-    <a href="/admin/posts.html">← Back to Posts</a>
-  </nav>
+    <header class="admin-header">
+      <h1 id="page-title">New Post</h1>
+      <nav>
+        <a href="/admin/posts.html">← Back to Posts</a>
+      </nav>
+    </header>
 
-  <form id="post-form">
-    <input type="text" id="title" placeholder="Title" required />
-    <input type="text" id="slug" placeholder="Slug" required />
+    <form id="post-form">
 
-    <textarea id="content" rows="10" placeholder="Post content..." required></textarea>
+      <label>
+        Title
+        <input
+          type="text"
+          id="title"
+          placeholder="Post title"
+          required
+        />
+      </label>
 
-    <label>
-      <input type="checkbox" id="published" />
-      Published
-    </label>
+      <label>
+        Slug
+        <input
+          type="text"
+          id="slug"
+          placeholder="post-slug"
+          required
+        />
+      </label>
 
-    <button type="submit">Save</button>
-  </form>
+      <label>
+        Content (Markdown)
+        <textarea
+          id="content"
+          rows="14"
+          placeholder="Write your post in markdown..."
+          required
+        ></textarea>
+      </label>
 
-  <p id="error" style="color:red;"></p>
+      <label class="checkbox">
+        <input type="checkbox" id="published" />
+        Published
+      </label>
+
+      <div class="form-actions">
+        <button type="submit">Save</button>
+      </div>
+
+      <p id="error" class="error"></p>
+
+    </form>
+
+  </main>
 
   <script type="module" src="/admin/js/post-edit.js"></script>
+
 </body>
 </html>
