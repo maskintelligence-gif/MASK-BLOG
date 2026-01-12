@@ -30,34 +30,44 @@
         <input type="text" id="slug" required />
       </label>
 
-      <label>
-        Content (Markdown)
-        <textarea id="content" rows="14" required></textarea>
-      </label>
+      <!-- MARKDOWN EDITOR -->
+      <section class="editor">
+        <div class="editor-pane">
+          <label>Content (Markdown)</label>
+          <textarea
+            id="content"
+            rows="16"
+            placeholder="Write markdown here..."
+            required
+          ></textarea>
+        </div>
+
+        <div class="editor-pane preview-pane">
+          <label>Live Preview</label>
+          <div id="markdown-preview" class="preview"></div>
+        </div>
+      </section>
 
       <label class="checkbox">
         <input type="checkbox" id="published" />
         Published
       </label>
 
-      <!-- ===============================
-           CATEGORIES
-      ================================ -->
-      <section id="categories-section" class="meta-section">
+      <!-- Categories -->
+      <section class="meta-section">
         <h3>Categories</h3>
         <div id="categories-list"></div>
       </section>
 
-      <!-- ===============================
-           TAGS
-      ================================ -->
-      <section id="tags-section" class="meta-section">
+      <!-- Tags -->
+      <section class="meta-section">
         <h3>Tags</h3>
         <div id="tags-list"></div>
       </section>
 
       <div class="form-actions">
         <button type="submit">Save</button>
+        <button type="button" id="preview-btn">Preview</button>
       </div>
 
       <p id="error" class="error"></p>
@@ -67,6 +77,5 @@
   </main>
 
   <script type="module" src="/admin/js/post-edit.js"></script>
-
 </body>
 </html>
