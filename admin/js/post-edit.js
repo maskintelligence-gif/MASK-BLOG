@@ -261,3 +261,16 @@ form.addEventListener("submit", async (e) => {
 
   window.location.href = "/admin/posts.html";
 });
+
+previewBtn.addEventListener("click", () => {
+  sessionStorage.setItem(
+    "postPreview",
+    JSON.stringify({
+      title: titleInput.value,
+      slug: slugInput.value,
+      content: contentInput.value
+    })
+  );
+
+  window.open("/admin/preview.html", "_blank");
+});
