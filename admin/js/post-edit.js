@@ -1,4 +1,14 @@
 import { supabase } from "/admin/js/supabase.js";
+import { renderMarkdown } from "/admin/js/markdown.js";
+
+const previewEl = document.getElementById("markdown-preview");
+const previewBtn = document.getElementById("preview-btn");
+
+function updatePreview() {
+  previewEl.innerHTML = renderMarkdown(contentInput.value);
+}
+
+contentInput.addEventListener("input", updatePreview);
 
 /* =========================================================
    AUTH GUARD
@@ -153,6 +163,8 @@ if (postId) {
   await loadCategories();
   await loadTags();
 }
+
+updatePreview();
 
 /* =========================================================
    SAVE HANDLER
