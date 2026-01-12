@@ -2,29 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Blog Posts</title>
+  <title>Posts</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/admin/css/admin.css" />
 </head>
 <body>
 
-  <h1>Blog Posts</h1>
+  <main class="admin-container">
 
-  <nav>
-    <a href="/admin/dashboard.html">← Dashboard</a>
-    <a href="/admin/post-edit.html">+ New Post</a>
-  </nav>
+    <header class="admin-header">
+      <h1>Posts</h1>
+      <a href="/admin/post-edit.html">+ New Post</a>
+    </header>
 
-  <table id="posts-table" border="1" cellpadding="8">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Status</th>
-        <th>Created</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="posts-body"></tbody>
+    </table>
+
+    <p id="error" class="error"></p>
+
+  </main>
 
   <script type="module" src="/admin/js/posts.js"></script>
 </body>
