@@ -22,38 +22,39 @@
 
       <label>
         Title
-        <input
-          type="text"
-          id="title"
-          placeholder="Post title"
-          required
-        />
+        <input type="text" id="title" required />
       </label>
 
       <label>
         Slug
-        <input
-          type="text"
-          id="slug"
-          placeholder="post-slug"
-          required
-        />
+        <input type="text" id="slug" required />
       </label>
 
       <label>
         Content (Markdown)
-        <textarea
-          id="content"
-          rows="14"
-          placeholder="Write your post in markdown..."
-          required
-        ></textarea>
+        <textarea id="content" rows="14" required></textarea>
       </label>
 
       <label class="checkbox">
         <input type="checkbox" id="published" />
         Published
       </label>
+
+      <!-- ===============================
+           CATEGORIES
+      ================================ -->
+      <section id="categories-section" class="meta-section">
+        <h3>Categories</h3>
+        <div id="categories-list"></div>
+      </section>
+
+      <!-- ===============================
+           TAGS
+      ================================ -->
+      <section id="tags-section" class="meta-section">
+        <h3>Tags</h3>
+        <div id="tags-list"></div>
+      </section>
 
       <div class="form-actions">
         <button type="submit">Save</button>
